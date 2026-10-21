@@ -1,0 +1,748 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Лекция 6. Сетевая экономика в электронной торговле</title>
+<meta name="description" content="Интерактивный рабочий материал к лекции 6 и практикуму П6 курса «Цифровое правительство и электронная торговля» (MBA, ВШБП).">
+<meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@400;500;600&display=swap">
+<style>
+/* Layout: sticky top bar with section rail, serif hero with the network diagram in a sand blob, then full-width chapters of soft cards, banners and expandable blocks.
+   Side colors stay constant in every diagram: terracotta = providers/sellers, slate blue = users/buyers, deep green = the platform. (Palette follows the reference lecture page.) */
+:root{
+  --bg:#FBF8F2; --surface:#FFFFFF; --ink:#24352D; --muted:#5F6F66; --line:#E6E0D3;
+  --deep:#1F3B2E; --plat:#2B4A3A; --plat-soft:#E3EBDD; --plat-ink:#1F3B2E; --on-plat:#FFFFFF;
+  --sage:#DDE6D3; --sand:#EFE6D6; --brown:#9A5B3A; --on-brown:#FFFFFF;
+  --b1:#4F7059; --b2:#2D4A3B; --on-b:#FFFFFF;
+  --sa:#B2693B; --sa-soft:#F5E6D9; --sa-ink:#7A4020;
+  --sb:#46708F; --sb-soft:#E1ECF3; --sb-ink:#2D5470;
+  --good:#2F7A4C; --good-soft:#E0F0E4; --bad:#B0412B; --bad-soft:#F8E3DD;
+  --shadow:0 8px 28px rgba(36,53,45,.07);
+  --f-display:'Cormorant Garamond','Playfair Display',Georgia,'Times New Roman',serif;
+  --f-body:'Jost','Segoe UI',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111A15; --surface:#18241D; --ink:#E7EEE6; --muted:#9BAEA2; --line:#2A3B31;
+  --deep:#D6E8D9; --plat:#357A5A; --plat-soft:#1E3328; --plat-ink:#9FD4B8; --on-plat:#FFFFFF;
+  --sage:#1F3228; --sand:#243229; --brown:#D08A5C; --on-brown:#1F140D;
+  --b1:#2F5A43; --b2:#1C3328; --on-b:#FFFFFF;
+  --sa:#E39B6B; --sa-soft:#3B281C; --sa-ink:#F0BF9C;
+  --sb:#7FB1D6; --sb-soft:#1B2E3C; --sb-ink:#B4D4EA;
+  --good:#5BC98A; --good-soft:#12301F; --bad:#F08A74; --bad-soft:#3A1A14;
+  --shadow:0 8px 28px rgba(0,0,0,.35); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111A15; --surface:#18241D; --ink:#E7EEE6; --muted:#9BAEA2; --line:#2A3B31;
+  --deep:#D6E8D9; --plat:#357A5A; --plat-soft:#1E3328; --plat-ink:#9FD4B8; --on-plat:#FFFFFF;
+  --sage:#1F3228; --sand:#243229; --brown:#D08A5C; --on-brown:#1F140D;
+  --b1:#2F5A43; --b2:#1C3328; --on-b:#FFFFFF;
+  --sa:#E39B6B; --sa-soft:#3B281C; --sa-ink:#F0BF9C;
+  --sb:#7FB1D6; --sb-soft:#1B2E3C; --sb-ink:#B4D4EA;
+  --good:#5BC98A; --good-soft:#12301F; --bad:#F08A74; --bad-soft:#3A1A14;
+  --shadow:0 8px 28px rgba(0,0,0,.35); color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{background:var(--bg);color:var(--ink);font:400 1rem/1.65 var(--f-body);margin:0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 96px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+h1,h2{font-family:var(--f-display);font-weight:600;color:var(--deep);text-wrap:balance;margin:0;line-height:1.04;letter-spacing:-.005em}
+h1{font-size:clamp(1.9rem,min(4.6vw,8vh),3.6rem);line-height:1.15}
+h2{font-size:clamp(1.7rem,3.6vw,2.5rem);line-height:1.12}
+h3{font:600 1.05rem/1.3 var(--f-body);margin:0}
+h3.sub{font:600 1.9rem/1.1 var(--f-display);color:var(--deep)}
+p{margin:0}
+:focus-visible{outline:2px solid var(--plat);outline-offset:2px}
+.lab{font:500 .875rem/1.35 var(--f-body);letter-spacing:.02em;color:var(--brown)}
+.lead{max-width:62ch;font-size:1.1rem}
+.muted{color:var(--muted)}
+.nowrap{white-space:nowrap}
+.small{font-size:.94rem}
+.stack{display:flex;flex-direction:column;gap:16px}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:12px max(16px,env(safe-area-inset-right,0px)) 12px max(16px,env(safe-area-inset-left,0px));background:var(--bg);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:24px}
+.top>*{min-width:0}
+.mark{display:flex;align-items:center;gap:10px;color:var(--deep);font:600 1.6rem/1 var(--f-display);white-space:nowrap;text-decoration:none}
+.rail{flex:1;overflow-x:auto}
+.rail ol{list-style:none;margin:0;padding:0;display:flex;gap:22px;width:max-content;margin-inline:auto}
+.rail button{display:block;padding:6px 0;background:none;border:0;border-bottom:2px solid transparent;font:inherit;font-size:.93rem;color:var(--ink);cursor:pointer;white-space:nowrap}
+.rail button:hover{color:var(--plat-ink)}
+.rail button[aria-current="true"]{border-bottom-color:var(--brown);font-weight:500}
+.pill{border:1px solid var(--line);border-radius:999px;padding:8px 18px;font-size:.85rem;color:var(--muted);white-space:nowrap;background:var(--surface)}
+@media (max-width:980px){.pill{display:none}}
+@media (max-width:820px){.mark span{display:none}.top{gap:12px}}
+
+/* hero */
+.hero{position:relative;max-width:1120px;margin:0 auto;padding-block:clamp(16px,4vh,44px) 28px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:16px;align-items:center}
+.hero-copy{display:flex;flex-direction:column;gap:22px;align-items:flex-start}
+.hero .sub{font-size:1.15rem;max-width:34ch}
+.cta{display:inline-flex;align-items:center;gap:14px;background:var(--plat);color:var(--on-plat);border-radius:999px;padding:15px 28px;font-weight:500;text-decoration:none}
+.cta:hover{filter:brightness(1.1)}
+.mini{display:flex;flex-wrap:wrap;gap:12px 26px;font-size:.92rem}
+.mini span{display:inline-flex;align-items:center;gap:10px}
+.mini svg{color:var(--plat-ink)}
+.hero-art{width:100%;height:auto;max-width:540px;justify-self:end}
+.svgt{font:500 14px var(--f-body);fill:var(--ink)}
+.svgt.w{fill:var(--on-plat);font-weight:600;font-size:14px}
+@media (max-width:900px){.hero{grid-template-columns:minmax(0,1fr)}.hero-art{justify-self:center;max-width:420px}}
+
+/* chapters */
+main{max-width:1120px;margin-inline:auto;display:block;padding-bottom:110px}
+.chap{padding-block:60px 8px;scroll-margin-top:72px;display:flex;flex-direction:column;gap:28px;min-width:0}
+.chap>header{display:flex;flex-direction:column;gap:10px}
+
+/* controls */
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:500 .93rem var(--f-body);padding:9px 18px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;cursor:pointer;transition:background .15s,border-color .15s}
+.chip:hover{border-color:var(--plat)}
+.chip[aria-pressed="true"]{background:var(--plat);color:var(--on-plat);border-color:var(--plat)}
+.btn{font:500 .93rem var(--f-body);padding:10px 20px;border-radius:999px;border:1px solid var(--plat);background:var(--plat);color:var(--on-plat);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--plat-ink)}
+
+/* banners */
+.banner{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.62fr) minmax(0,1fr);border-radius:24px;overflow:hidden;color:var(--on-b)}
+.banner.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.banner>div{padding:34px;display:flex;flex-direction:column;gap:12px;justify-content:center;min-width:0}
+.b1{background:var(--b1)}.b2{background:var(--b2)}
+.bm{background:var(--sand);align-items:center}
+.bm svg{width:100%;max-width:200px;height:auto}
+.banner .lab{color:var(--sage);opacity:.95}
+.banner h3{font:600 2rem/1.05 var(--f-display);color:var(--on-b)}
+.qm{font:600 3.6rem/.6 var(--f-display);color:var(--sand);height:1.6rem}
+.q2{font:600 1.55rem/1.25 var(--f-display)}
+.q3{font:600 clamp(1.7rem,3.2vw,2.4rem)/1.15 var(--f-display)}
+.kp{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:14px}
+.kp b{display:block;font:600 2.3rem/1 var(--f-display)}
+.kp span{font-size:.88rem;opacity:.92}
+@media (max-width:860px){.banner,.banner.two{grid-template-columns:minmax(0,1fr)}.bm{display:none}.banner>div{padding:26px}}
+
+/* cards */
+.note{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 22px;display:flex;flex-direction:column;gap:8px;box-shadow:var(--shadow);max-width:70ch}
+.note.warn{border-color:var(--sa)}
+.note.wide{max-width:none}
+.fig{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:16px;min-width:0;box-shadow:var(--shadow)}
+.fig svg{width:100%;height:auto;display:block}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:8px;min-width:0;box-shadow:var(--shadow)}
+.steps{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.step{background:var(--bg);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:6px;position:relative;min-width:0}
+.step .n{font:500 .85rem var(--f-body);color:var(--brown)}
+.step.end{background:var(--bad-soft)}
+.step.ok{background:var(--good-soft)}
+@media (min-width:900px){.steps.arrows .step:not(:last-child)::after{content:"→";position:absolute;right:-13px;top:50%;transform:translateY(-50%);z-index:2;width:22px;height:22px;border-radius:50%;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;font-size:.8rem;color:var(--brown)}}
+.tag{white-space:nowrap;font:500 .85rem var(--f-body);padding:3px 12px;border-radius:999px;display:inline-block;align-self:flex-start;background:var(--sage);color:var(--plat-ink)}
+.tag.pos{background:var(--good-soft);color:var(--good)}.tag.neg{background:var(--bad-soft);color:var(--bad)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:26px;display:grid;gap:18px 32px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));box-shadow:var(--shadow);align-content:start;min-width:0}
+.panel h3{grid-column:1/-1;font:600 1.9rem/1.1 var(--f-display);color:var(--deep)}
+.panel .f{display:flex;flex-direction:column;gap:3px;min-width:0}
+
+/* expandable cards (open below the card itself) */
+.xgrid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));align-items:stretch}
+.xgrid>.xcard{height:100%}
+.xcard{font:inherit;color:inherit;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px 20px;box-shadow:var(--shadow);cursor:pointer;display:flex;flex-direction:column;gap:12px;min-width:0}
+.xcard:hover{border-color:var(--plat)}
+.xh{display:flex;align-items:center;gap:14px}
+.xh .ico{margin:0;width:50px;height:50px}
+.xt{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.xt b{font-weight:600}
+.pm{flex:none;font:500 1.5rem/1 var(--f-body);color:var(--brown)}
+.pm::before{content:"+"}
+.xcard[aria-expanded="true"] .pm::before{content:"\2013"}
+.xcard[aria-expanded="true"]{border-color:var(--plat);box-shadow:0 0 0 1px var(--plat),var(--shadow)}
+.xb{display:none;flex-direction:column;gap:12px;border-top:1px dashed var(--line);padding-top:12px}
+.xcard[aria-expanded="true"] .xb{display:flex}
+.xb .f{display:flex;flex-direction:column;gap:2px}
+.ico{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;margin-bottom:8px;flex:none}
+.ico.g{background:var(--sage);color:var(--plat-ink)}.ico.s{background:var(--sand);color:var(--brown)}.ico.m{background:var(--b1);color:var(--on-b)}
+
+/* list + panel to the right */
+.md{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:20px;align-items:start}
+@media (max-width:760px){.md{grid-template-columns:minmax(0,1fr)}}
+.mdl{display:flex;flex-direction:column;gap:8px;min-width:0}
+.mdi{font:500 .96rem var(--f-body);text-align:left;padding:12px 18px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;cursor:pointer}
+.mdi:hover{border-color:var(--plat)}
+.mdi[aria-pressed="true"]{background:var(--plat);color:var(--on-plat);border-color:var(--plat)}
+
+/* type cards: text only */
+.tseg{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.tcard{font:inherit;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:4px;cursor:pointer;color:var(--ink);box-shadow:var(--shadow)}
+.tcard .yr{font:600 2.4rem/1 var(--f-display);color:var(--brown)}
+.tcard .fm{font:600 1.9rem/1.1 var(--f-display);color:var(--brown)}
+.tcard b{font-weight:600;font-size:1.05rem}
+.tcard small{color:var(--muted);font-size:.86rem}
+.tcard .def{margin-top:8px;padding-top:10px;border-top:1px solid var(--line);font-size:.92rem;line-height:1.5;color:var(--ink)}
+.ts-fig{align-items:center;text-align:center}
+.ts-fig svg{max-width:520px;margin-inline:auto}
+.ts-fig .svgt{font-size:17px}
+.ts-fig .seg{justify-content:center}
+.ts-cards{width:100%;max-width:780px;margin-inline:auto}
+.ts-cards .card{align-items:center;text-align:center}
+.defs{align-items:start}
+.rgrid{align-items:start}
+.rbtn{font:500 .93rem var(--f-body);display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;margin-top:6px;padding:10px 16px;border:1px solid var(--plat);border-radius:999px;background:transparent;color:var(--plat-ink);cursor:pointer;text-align:left}
+.rbtn::after{content:"+";font:500 1.4rem/1 var(--f-body);color:var(--brown);flex:none}
+.rbtn[aria-expanded="true"]{background:var(--plat);color:var(--on-plat)}
+.rbtn[aria-expanded="true"]::after{content:"\2013";color:var(--on-plat)}
+.rans{display:flex;flex-direction:column;gap:8px;padding-top:6px}
+.rans[hidden]{display:none}
+.tcard[aria-pressed="true"]{box-shadow:0 0 0 2px var(--plat),var(--shadow)}
+
+/* figure + controls */
+.calc{display:grid;gap:26px;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:center}
+@media (max-width:760px){.calc{grid-template-columns:minmax(0,1fr)}}
+.ctl label{display:flex;justify-content:space-between;gap:12px;font-size:.95rem}
+.ctl output{color:var(--plat-ink);font-weight:600}
+input[type=range]{width:100%;accent-color:var(--plat)}
+.kpi{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding-block:8px;border-bottom:1px solid var(--line);font-size:.95rem}
+.kpi b{font:600 2rem/1 var(--f-display);color:var(--deep);font-variant-numeric:tabular-nums}
+.formula{font:600 1.6rem/1.2 var(--f-display);color:var(--deep)}
+.out{display:flex;flex-direction:column;gap:14px;min-width:0}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:18px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.94rem}
+th,td{text-align:left;vertical-align:top;padding:11px 16px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+thead th{font-weight:600;font-size:.88rem;color:var(--muted);background:var(--bg)}
+td.hl,th.hl{background:var(--plat-soft)}
+td.dim,th.dim{opacity:.35}
+table.wide{min-width:560px}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.duo{display:grid;gap:26px;grid-template-columns:minmax(0,.8fr) minmax(0,1fr);align-items:center}
+@media (max-width:760px){.duo{grid-template-columns:minmax(0,1fr)}}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.9rem;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+details.ex-det{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+details.ex-det>summary{cursor:pointer;padding:16px 22px;font:600 1.02rem/1.3 var(--f-body);list-style:none;display:flex;gap:14px;align-items:center;justify-content:space-between;border-radius:18px}
+details.ex-det>summary::-webkit-details-marker{display:none}
+details.ex-det>summary::after{content:"+";font:500 1.5rem/1 var(--f-body);color:var(--brown);flex:none}
+details.ex-det[open]>summary::after{content:"\2013"}
+details.ex-det>.body{padding:0 22px 20px;display:grid;gap:14px 28px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+details.ex-det>.body.one{display:flex;flex-direction:column}
+.list{display:flex;flex-direction:column;gap:10px}
+.swap{animation:swap .3s ease both}
+@keyframes swap{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* stats */
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:20px 22px;display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow)}
+.stat b{font:600 2.6rem/1 var(--f-display);color:var(--deep)}
+.stat small{color:var(--muted);font-size:.86rem}
+.row3{display:grid;grid-template-columns:9rem minmax(0,1fr) 4.5rem;gap:12px;align-items:center;font-size:.93rem}
+.tr{height:16px;border-radius:999px;background:var(--line);overflow:hidden}
+.tr i{display:block;height:100%;border-radius:999px}
+@media (max-width:520px){.row3{grid-template-columns:7rem minmax(0,1fr) 3.6rem}}
+
+/* flywheel */
+.fw{position:relative;width:min(100%,30rem);aspect-ratio:1;margin:0 auto}
+.fw svg{position:absolute;inset:0;width:100%;height:100%}
+.fw .ring{fill:none;stroke:var(--line);stroke-width:.5;stroke-dasharray:1.4 1.8;transform-origin:50px 50px;animation:spin var(--dur,12s) linear infinite}
+.fw .arc{fill:none;stroke:var(--brown);stroke-width:.9;stroke-linecap:round}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fw .n{position:absolute;width:27%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:3px solid transparent;color:#fff;display:grid;place-items:center;text-align:center;padding:.3rem;font:500 clamp(.7rem,2.6vw,.82rem)/1.2 var(--f-body);cursor:pointer}
+.fw .n[aria-pressed="true"]{border-color:var(--brown);box-shadow:0 0 0 4px var(--sa-soft)}
+.fw .mid{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:34%;text-align:center;font:600 clamp(.95rem,3vw,1.25rem)/1.1 var(--f-display);color:var(--deep)}
+.gauge{height:14px;border-radius:999px;background:var(--line);overflow:hidden}
+.gauge i{display:block;height:100%;background:var(--plat);border-radius:999px;transition:width .3s}
+.sl{display:grid;grid-template-columns:minmax(0,1fr) 6rem 1.4rem;gap:10px;align-items:center;font-size:.9rem}
+.sl.weak .nm{color:var(--sa-ink);font-weight:600}
+
+/* quiz */
+.qgrid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:14px;min-width:0;box-shadow:var(--shadow)}
+.q .seg{flex-direction:column;align-items:stretch}
+.q .seg .chip{padding:8px 14px;font-size:.9rem;border-radius:14px;text-align:left}
+.q .seg .chip.ok{background:var(--good);border-color:var(--good);color:var(--surface)}
+.q .seg .chip.no{background:var(--bad);border-color:var(--bad);color:var(--surface)}
+.fb{font-size:.92rem;padding:12px 14px;border-radius:12px}
+.fb.good{background:var(--good-soft)}.fb.bad{background:var(--bad-soft)}
+.score{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.fld{font:inherit;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:8px 12px;width:100%;min-width:0}
+.big{font:600 clamp(1.5rem,3vw,2rem)/1.2 var(--f-display);color:var(--deep)}
+.pager{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--bg);border-top:1px solid var(--line);padding:10px max(16px,env(safe-area-inset-right,0px)) max(10px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.pin{max-width:1120px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.pin .btn{min-width:7rem}
+.btn:disabled{opacity:.4;cursor:default}
+.uz{--plat:#7000FF;--plat-soft:#EEE3FF;--plat-ink:#4A14A8;--deep:#3A0F86;--b1:#7000FF;--b2:#4B14B8;--sage:#EEE3FF;--sand:#F5EEFF;--brown:#7000FF}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .uz{--plat:#A06BFF;--plat-soft:#2A1B52;--plat-ink:#D2BBFF;--deep:#E4D6FF;--b1:#5B1FD1;--b2:#3A1494;--sage:#2A1B52;--sand:#2A1F4A;--brown:#B795FF}}
+:root[data-theme="dark"] .uz{--plat:#A06BFF;--plat-soft:#2A1B52;--plat-ink:#D2BBFF;--deep:#E4D6FF;--b1:#5B1FD1;--b2:#3A1494;--sage:#2A1B52;--sand:#2A1F4A;--brown:#B795FF}
+.uz .b1{background:linear-gradient(135deg,var(--b1),#9B4DFF)}
+.uz .grape{width:54px;height:54px;margin-bottom:4px}
+.uz .xcard[aria-expanded="true"]{border-color:var(--plat)}
+.cta.ghost{background:transparent;color:var(--plat-ink);border:1.5px solid var(--plat)}
+.prog{position:absolute;left:0;right:0;top:-1px;height:3px;background:var(--line)}
+.prog i{display:block;height:100%;width:0;background:var(--brown);transition:width .3s}
+.nextcta{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px 24px;background:var(--plat-soft);border-radius:20px;padding:22px 26px}
+.nextcta p{font:600 1.45rem/1.2 var(--f-display);color:var(--deep);max-width:36ch}
+@media (max-width:560px){.nx{display:none}}
+.foot{margin-top:56px;border-top:1px solid var(--line);padding-top:24px;display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between;color:var(--muted);font-size:.9rem}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a class="mark" href="#start" data-go="start"><svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><circle cx="16" cy="16" r="6" fill="var(--plat)"/><g fill="var(--sa)"><circle cx="5" cy="8" r="3.4"/><circle cx="5" cy="24" r="3.4"/></g><g fill="var(--sb)"><circle cx="27" cy="8" r="3.4"/><circle cx="27" cy="24" r="3.4"/></g><g stroke="var(--muted)" stroke-width="1.2"><path d="M8 10l5 4M8 22l5-4M24 10l-5 4M24 22l-5-4"/></g></svg><span>Лекция 6</span></a>
+  <nav class="rail" aria-label="Вкладки"><ol id="rail"></ol></nav>
+  <span class="pill">RHT1105</span>
+</header>
+
+<main>
+<div class="chap" data-tab="start" data-label="Вход" style="padding-top:12px"><div id="top" class="hero">
+  <div class="hero-copy">
+    <span class="lab">Цифровое правительство и электронная торговля</span>
+    <h1>Системная природа сетевой экономики в электронной торговле</h1>
+    <p class="sub">Как связи между участниками создают ценность, которой нет у отдельных компаний. Разберём на Uzum и рынке Узбекистана.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:12px"><a class="cta" href="#s-q">Начать лекцию <span aria-hidden="true">→</span></a><a class="cta ghost" href="#pr" data-go="pr">Сразу к практикуму</a></div>
+    <div class="mini">
+      <span><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M8 7l3 9M16 7l-3 9M8.5 6h7"/></svg>Сеть</span>
+      <span><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></svg>Система</span>
+      <span><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V11M10 20V4M16 20v-7M22 20H2"/></svg>Законы</span>
+    </div>
+  </div>
+  <svg class="hero-art" viewBox="0 0 540 440" role="img" aria-label="Платформа соединяет продавцов, покупателей и сервисы">
+    <circle cx="270" cy="220" r="205" fill="var(--sand)"/>
+    <g stroke-width="2" fill="none">
+      <path d="M100 110L222 200M100 190L214 212M100 270L214 228M100 350L222 242" stroke="var(--sa)"/>
+      <path d="M440 110L318 200M440 190L326 212M440 270L326 228M440 350L318 242" stroke="var(--sb)"/>
+      <path d="M270 290V340M215 262L170 372M325 262L370 372" stroke="var(--b1)"/>
+    </g>
+    <circle cx="270" cy="220" r="66" fill="var(--plat)"/>
+    <text class="svgt w" x="270" y="226" text-anchor="middle">Платформа</text>
+    <g fill="var(--sa)"><circle cx="90" cy="110" r="17"/><circle cx="90" cy="190" r="17"/><circle cx="90" cy="270" r="17"/><circle cx="90" cy="350" r="17"/></g>
+    <g fill="var(--sb)"><circle cx="450" cy="110" r="17"/><circle cx="450" cy="190" r="17"/><circle cx="450" cy="270" r="17"/><circle cx="450" cy="350" r="17"/></g>
+    <g fill="var(--b1)"><circle cx="270" cy="352" r="15"/><circle cx="165" cy="384" r="12"/><circle cx="375" cy="384" r="12"/></g>
+    <text class="svgt" x="90" y="78" text-anchor="middle">продавцы</text>
+    <text class="svgt" x="450" y="78" text-anchor="middle">покупатели</text>
+    <text class="svgt" x="270" y="408" text-anchor="middle">платежи, доставка, государство</text>
+  </svg>
+</div>
+
+<!-- ВОПРОС -->
+<section id="s-q">
+  <div class="banner">
+    <div class="b1"><span class="lab">Вопрос аудитории</span><h3>Почему Uzum Market стоит больше, чем большинство торговых сетей страны,</h3></div>
+    <div class="bm" aria-hidden="true"><svg viewBox="0 0 160 110"><g stroke-width="2"><line x1="22" y1="22" x2="62" y2="52" stroke="var(--sa)"/><line x1="22" y1="55" x2="62" y2="55" stroke="var(--sa)"/><line x1="22" y1="88" x2="62" y2="58" stroke="var(--sa)"/><line x1="138" y1="22" x2="98" y2="52" stroke="var(--sb)"/><line x1="138" y1="55" x2="98" y2="55" stroke="var(--sb)"/><line x1="138" y1="88" x2="98" y2="58" stroke="var(--sb)"/></g><circle cx="80" cy="55" r="22" fill="var(--plat)"/><g fill="var(--sa)"><circle cx="18" cy="22" r="8"/><circle cx="18" cy="55" r="8"/><circle cx="18" cy="88" r="8"/></g><g fill="var(--sb)"><circle cx="142" cy="22" r="8"/><circle cx="142" cy="55" r="8"/><circle cx="142" cy="88" r="8"/></g></svg></div>
+    <div class="b2"><span class="qm">“</span><p class="q2">…хотя не владеет почти ни одним товаром?</p></div>
+  </div>
+</section>
+</div>
+
+<!-- РАЗДЕЛ 1 -->
+<section class="chap" id="s-line" data-with="start">
+  <header><span class="lab">Раздел 1</span><h2>Линейная экономика и сетевая модель</h2></header>
+  <div class="seg" id="segLine" role="group" aria-label="Модель"><button class="chip" aria-pressed="true" data-v="pipe">Линейная цепочка</button><button class="chip" aria-pressed="false" data-v="net">Сетевая модель</button></div>
+
+  <div id="linePipe" class="fig">
+    <div class="steps arrows">
+      <div class="step"><span class="n">Звено 1</span><h3>Производитель</h3><span class="small muted">изготавливает товар</span></div>
+      <div class="step"><span class="n">Звено 2</span><h3>Оптовик, дистрибьютор</h3><span class="small muted">добавляет наценку</span></div>
+      <div class="step"><span class="n">Звено 3</span><h3>Магазин</h3><span class="small muted">добавляет наценку</span></div>
+      <div class="step"><span class="n">Звено 4</span><h3>Покупатель</h3><span class="small muted">платит итоговую цену</span></div>
+    </div>
+    <svg viewBox="0 0 700 46" aria-hidden="true"><path d="M640 8C640 40 60 40 60 12" fill="none" stroke="var(--sa)" stroke-width="2" stroke-dasharray="6 6"/><path d="M54 18l6-8 6 8" fill="none" stroke="var(--sa)" stroke-width="2"/></svg>
+    <p class="small muted" style="text-align:center;margin-top:-10px">Информация о спросе движется назад медленно и с искажениями</p>
+    <p><b>Преимущество строится на контроле ресурсов:</b> заводов, складов, торговых площадей, каналов сбыта.</p>
+  </div>
+
+  <div id="lineNet" class="fig" hidden>
+    <div class="stack" style="align-items:center">
+      <div class="note" style="max-width:none;align-self:stretch;box-shadow:none"><span class="lab">Вопрос для обсуждения</span><p>Вспомните последнюю покупку на маркетплейсе. Сколько разных организаций участвовало в сделке?</p></div>
+      <svg id="netSvg" viewBox="0 0 440 340" style="max-width:620px" role="group" aria-label="Девять участников вокруг покупки. Нажмите на номер, чтобы закрасить."></svg>
+    </div>
+  </div>
+  <p class="lead">Маркетплейс не производит товары и часто не владеет ими. Он соединяет тысячи продавцов с миллионами покупателей, платёжными сервисами, службами доставки и государственными системами. Поэтому смотреть нужно на систему целиком, а не на отдельную компанию.</p>
+</section>
+
+<!-- РАЗДЕЛ 2 -->
+<section class="chap" id="s-def" data-tab="def" data-label="Определение">
+  <header><span class="lab">Раздел 2</span><h2>Сетевая экономика</h2></header>
+  <div class="banner">
+    <div class="b1"><span class="lab">Определение</span><h3>Сетевая экономика</h3><p>Экономика, в которой основная часть ценности создаётся и распределяется через цифровые сети взаимодействий между людьми, компаниями, государством и устройствами.</p></div>
+    <div class="bm" aria-hidden="true"><svg viewBox="0 0 160 110"><g stroke="var(--muted)" stroke-width="1.5" opacity=".6"><path d="M30 25L80 55 130 25M30 85L80 55 130 85M30 25V85M130 25V85"/></g><circle cx="80" cy="55" r="16" fill="var(--plat)"/><g fill="var(--sa)"><circle cx="30" cy="25" r="9"/><circle cx="30" cy="85" r="9"/></g><g fill="var(--sb)"><circle cx="130" cy="25" r="9"/><circle cx="130" cy="85" r="9"/></g></svg></div>
+    <div class="b2"><span class="qm">“</span><p class="q2">Ценность каждого участника и всей системы растёт вместе с числом и качеством связей.</p></div>
+  </div>
+  <p class="lead">Термин сложился в 1990-х, когда массовый интернет сделал связи между участниками рынка почти бесплатными.</p>
+
+  <div class="fig">
+    <h3 class="sub">Важно различать</h3>
+    <div class="duo">
+      <svg id="nestSvg" viewBox="0 0 320 300" role="img" aria-label="Цифровая экономика, сетевая экономика и электронная торговля вложены друг в друга"></svg>
+      <div class="stack"><div class="chips" id="nestChips"></div><div class="note" id="nestInfo" style="box-shadow:none"></div></div>
+    </div>
+  </div>
+
+  <div class="stack">
+    <h3 class="sub">Разные определения</h3>
+    <div class="tseg" id="authCards"></div>
+    <div class="panel" id="authPanel"></div>
+  </div>
+</section>
+
+<!-- РАЗДЕЛ 3 -->
+<section class="chap" id="s-sys" data-tab="sys" data-label="Система">
+  <header><span class="lab">Раздел 3</span><h2>Электронная торговля как система</h2></header>
+  <div class="banner two">
+    <div class="b1"><span class="lab">Определение</span><h3>Система</h3><p>Совокупность взаимосвязанных элементов, которая образует целостность и обладает свойствами, отсутствующими у отдельных элементов. Л. фон Берталанфи, общая теория систем.</p></div>
+    <div class="b2"><span class="qm">“</span><p class="q2">Электронная торговля полностью отвечает этому определению.</p></div>
+  </div>
+  <div class="stack"><h3 class="sub">Шесть подсистем</h3><div class="xgrid" id="subGrid"></div></div>
+</section>
+
+<section class="chap" id="s-prop" data-with="sys">
+  <header><span class="lab">Раздел 3</span><h2>Системные свойства</h2></header>
+  <div class="stack"><div class="md"><div class="mdl" id="propList"></div><div class="panel" id="propPanel"></div></div></div>
+  <div class="stack"><h3 class="sub">Пример: комиссия платформы</h3>
+    <div class="seg" id="segThink" role="group" aria-label="Тип мышления"><button class="chip" aria-pressed="true" data-v="lin">Линейное мышление</button><button class="chip" aria-pressed="false" data-v="sys">Системное мышление</button></div>
+    <div class="steps arrows" id="chain"></div></div>
+  <div class="banner two">
+    <div class="b1"><span class="lab">Вывод для менеджера</span><h3>Не оптимизируйте один элемент</h3><p>Главная ошибка линейного мышления в e-commerce: улучшать одно звено и не видеть связей с остальными.</p></div>
+    <div class="b2"><span class="qm">“</span><p class="q3">Системный подход требует прогнозировать цепочку последствий любого решения.</p></div>
+  </div>
+</section>
+
+<!-- РАЗДЕЛ 4 -->
+<section class="chap" id="s-laws" data-tab="laws" data-label="Законы">
+  <header><span class="lab">Раздел 4</span><h2>Законы сетевой экономики</h2><p class="lead">Если сеть вырастает в 10 раз, число возможных связей между участниками увеличивается примерно в 100 раз. Выберите закон и проверьте это на схеме.</p></header>
+  <div class="tseg" id="lawCards"></div>
+  <div class="fig"><div class="calc"><svg id="lawSvg" viewBox="0 0 400 400" role="img" aria-label="Схема сети"></svg><div class="out" id="lawOut"></div></div>
+    <div class="legend"><span><i style="background:var(--sa)"></i>участники сети</span><span><i style="background:var(--sb)"></i>участники сети (второй цвет для наглядности)</span><span><i style="background:var(--plat)"></i>источник сигнала (закон Сарнова)</span></div></div>
+  <div class="note warn"><span class="lab" style="color:var(--sa-ink)">Критический взгляд · уровень MBA</span>
+    <p>Меткалф даёт верхнюю оценку. Не каждый участник взаимодействует с каждым, поэтому Э. Одлызко и Б. Тилли (2005) предложили более реалистичную оценку: <span class="nowrap">V ~ n·log n</span>.</p>
+    <p>Значение имеют активные и релевантные связи: тысяча продавцов детских товаров ничего не добавляет покупателю автозапчастей. Сильные платформы измеряют ликвидность, то есть вероятность быстро удовлетворить запрос покупателя.</p></div>
+</section>
+
+<section class="chap" id="s-pat" data-with="laws">
+  <header><span class="lab">Раздел 4</span><h2>Другие закономерности</h2></header>
+  <div class="list" id="patList"></div>
+</section>
+
+<!-- РАЗДЕЛ 5 -->
+<section class="chap" id="s-eff" data-tab="eff" data-label="Эффекты">
+  <header><span class="lab">Раздел 5</span><h2>Сетевые эффекты</h2><p class="lead">Чем больше пользователей, тем ценнее продукт для каждого из них (Katz, Shapiro, 1985). Именно это защищает цифровые платформы от конкурентов.</p></header>
+  <div class="seg" id="segEff" role="group" aria-label="Фильтр"><button class="chip" aria-pressed="true" data-v="all">Все виды</button><button class="chip" aria-pressed="false" data-v="pos">Усиливают ценность</button><button class="chip" aria-pressed="false" data-v="neg">Снижают ценность</button></div>
+  <div class="xgrid" id="effGrid"></div>
+</section>
+
+<section class="chap" id="s-crit" data-with="eff">
+  <header><span class="lab">Раздел 5</span><h2>Проблема «курицы и яйца»</h2><p class="lead">Покупатели не придут туда, где нет продавцов, а продавцы не придут, где нет покупателей. Это главная трудность запуска любой платформы.</p></header>
+  <div class="stack">
+    <div class="fig"><div class="calc">
+      <div class="stack"><svg id="cmChart" viewBox="0 0 400 220" role="img" aria-label="Кривая роста сети с порогом критической массы"></svg>
+        <div class="ctl"><label for="cmSlide"><span>Участников, % от потенциала</span><output id="cmVal">15</output></label><input id="cmSlide" type="range" min="0" max="100" value="15"></div></div>
+      <div class="note" id="cmNote" style="box-shadow:none"></div>
+    </div></div>
+    <h3 class="sub" style="font-size:1.5rem">Стратегии прохождения критической массы</h3>
+    <div class="md"><div class="mdl" id="stratList"></div><div class="panel" id="stratPanel"></div></div></div>
+</section>
+
+<!-- РАЗДЕЛ 6 -->
+<section class="chap" id="s-plat" data-tab="plat" data-label="Платформы">
+  <header><span class="lab">Раздел 6</span><h2>Платформы и двусторонние рынки</h2></header>
+  <div class="banner two">
+    <div class="b1"><span class="lab">Определение</span><h3>Двусторонний рынок</h3><p>Платформа обслуживает две и более группы клиентов, связанные перекрёстными сетевыми эффектами, и сама определяет правила и цены (Rochet, Tirole, 2003).</p></div>
+    <div class="b2"><span class="qm">“</span><p class="q2">Оптимальная цена для одной стороны зависит от того, сколько участников на другой.</p></div>
+  </div>
+  <div class="fig ts-fig"><h3 class="sub">Структура маркетплейса</h3>
+    <div class="seg" id="segSub" role="group" aria-label="Кого субсидируем"><button class="chip" aria-pressed="true" data-v="buy">Субсидируем покупателей</button><button class="chip" aria-pressed="false" data-v="sell">Субсидируем продавцов</button></div>
+    <svg viewBox="0 0 640 250" role="img" aria-label="Покупатели и продавцы связаны через платформу"><path d="M170 80C250 10 390 10 470 80" fill="none" stroke="var(--brown)" stroke-width="2.5"/><path d="M162 72l8 10 6-12M478 72l-8 10-6-12" fill="none" stroke="var(--brown)" stroke-width="2.5"/>
+      <g stroke-width="2" fill="none"><path d="M140 125L250 150" stroke="var(--sb)"/><path d="M500 125L390 150" stroke="var(--sa)"/><path d="M190 215L270 180M320 205V185M450 215L370 180" stroke="var(--b1)"/></g>
+      <rect x="40" y="90" width="160" height="60" rx="14" fill="var(--sb)"/><text class="svgt w" x="120" y="126" text-anchor="middle">Покупатели</text>
+      <rect x="440" y="90" width="160" height="60" rx="14" fill="var(--sa)"/><text class="svgt w" x="520" y="126" text-anchor="middle">Продавцы</text>
+      <rect x="240" y="130" width="160" height="60" rx="14" fill="var(--plat)"/><text class="svgt w" x="320" y="166" text-anchor="middle">Платформа</text>
+      <rect x="110" y="205" width="130" height="36" rx="12" fill="var(--sage)"/><text class="svgt" x="175" y="228" text-anchor="middle">платежи, банк</text>
+      <rect x="265" y="205" width="110" height="36" rx="12" fill="var(--sage)"/><text class="svgt" x="320" y="228" text-anchor="middle">логистика</text>
+      <rect x="400" y="205" width="130" height="36" rx="12" fill="var(--sage)"/><text class="svgt" x="465" y="228" text-anchor="middle">государство</text>
+      <text class="svgt" x="320" y="22" text-anchor="middle" style="fill:var(--brown)">перекрёстные сетевые эффекты</text></svg>
+    <div class="grid ts-cards" id="tsCards"></div></div>
+
+</section>
+
+<section class="chap" id="s-fly" data-with="plat">
+  <header><span class="lab">Раздел 6</span><h2>Маховик роста</h2></header>
+  <div class="stack">
+    <p class="lead">Каждое звено ускоряет следующее, а скорость всего колеса задаёт самое слабое. Меняйте оценки и смотрите, куда выгоднее вложить ресурсы.</p>
+    <div class="fig"><div class="calc"><div class="fw" id="fw"></div>
+      <div class="out"><div id="fwSliders" class="stack" style="gap:10px"></div>
+        <div><div class="kpi" style="border:0;padding-bottom:4px"><span>Скорость маховика</span><b id="fwSpeed"></b></div><div class="gauge"><i id="fwGauge"></i></div></div>
+        <div class="chips"><button class="btn" id="fwWeak">Вложить в слабое звено +1</button><button class="btn ghost" id="fwVis">Вложить в самое заметное +1</button><button class="btn ghost" id="fwReset">Сбросить</button></div>
+        <div class="note" id="fwMsg" style="box-shadow:none"></div></div></div></div>
+    <div class="steps"><div class="step"><span class="n">Шаг 1</span><h3>Найдите слабое звено</h3><span class="small muted">Оно ограничивает скорость всей системы, например логистика в регионах.</span></div><div class="step"><span class="n">Шаг 2</span><h3>Задайте метрику</h3><span class="small muted">Для каждого звена нужен измеримый показатель.</span></div><div class="step"><span class="n">Шаг 3</span><h3>Инвестируйте в слабое звено</h3><span class="small muted">Не в самое заметное. Это теория ограничений в сетевой системе.</span></div></div></div>
+</section>
+
+<!-- РАЗДЕЛ 7 -->
+<section class="chap" id="s-uz" data-tab="uz" data-label="Узбекистан">
+  <header><span class="lab">Раздел 7</span><h2>E-commerce Узбекистана: данные и кейс Uzum</h2></header>
+  <div class="grid" id="stats"></div>
+  <div class="fig"><h3 class="sub">Доля онлайна в розничном товарообороте</h3><div class="stack" id="shareBars" style="gap:12px"></div></div>
+  <div class="note wide"><span class="lab">Системный вывод</span><p>При доле онлайна около 4–5% рынок прошёл критическую массу и находится в фазе ускоренного роста. Сетевые эффекты уже запущены, значительная часть потенциала не реализована. Поэтому приходят международные игроки (Ozon, Wildberries), а местные платформы наращивают инфраструктуру.</p></div>
+
+  <div class="nextcta"><p>Цифры показывают потенциал рынка. Посмотрим, как его использует Uzum.</p><button class="btn" data-go="uzum">Разобрать кейс Uzum</button></div>
+</section>
+
+<section class="chap uz" id="s-uzum" data-tab="uzum" data-label="Кейс Uzum">
+  <header><span class="lab">Раздел 7</span><h2>Кейс: экосистема Uzum</h2></header>
+  <div class="banner two">
+    <div class="b1"><span class="lab">Кейс</span><h3>Экосистема Uzum</h3><p>Первая технологическая компания Узбекистана со статусом «единорога», оценка выше 1 млрд долларов.</p></div>
+    <div class="b2"><div class="kp"><div><b>≈20 млн</b><span>пользователей</span></div><div><b>2,3 млрд $</b><span>оценка, март 2026</span></div><div><b>691 млн $</b><span>выручка 2025</span></div></div></div>
+  </div>
+  <div class="grid defs">
+    <div class="card"><span class="lab">Термин</span><h3>Статус «единорога»</h3><p>Единорогом называют частную стартап-компанию, оценка которой превысила 1 млрд долларов США до выхода на биржу. Термин в 2013 году предложила инвестор Айлин Ли (Cowboy Ventures): такие компании встречались так же редко, как мифические единороги.</p><p class="small muted">Оценку определяет цена последнего раунда инвестиций, а не выручка или прибыль.</p></div>
+    <div class="card"><span class="lab">Показатель</span><h3>GMV (Gross Merchandise Value)</h3><p>Общий денежный объём продаж товаров и услуг через торговую площадку или маркетплейс за определённый период.</p><p class="small muted">GMV не равен выручке платформы: от торговли платформа получает только часть GMV (комиссии), а также доход от рекламы и сервисов.</p></div>
+  </div>
+  <div class="stack"><h3 class="sub">Какой сетевой механизм работает</h3><div class="xgrid" id="uzGrid"></div>
+    <p class="small muted">Источники: TechCrunch (10.03.2026), uzum.com. Чистая прибыль 2025 г. 176 млн долл.</p></div>
+  <div class="note wide"><span class="lab">Вопросы к кейсу</span><ol style="margin:0;padding-left:1.2rem;display:flex;flex-direction:column;gap:8px"><li>Какая сторона рынка для Uzum Market субсидируется сильнее: покупатели или продавцы? Почему?</li><li>Где самое слабое звено «маховика» Uzum сегодня и как его усиление влияет на всю систему?</li><li>Какие риски для продавцов создаёт ситуация, когда крупная экосистема одновременно площадка, банк и логистический оператор?</li></ol></div>
+  <div class="nextcta"><p>Чем крупнее экосистема, тем выше системные риски.</p><button class="btn" data-go="risk">Какие риски это создаёт</button></div>
+</section>
+
+<!-- РАЗДЕЛ 8 -->
+<section class="chap" id="s-risk" data-tab="risk" data-label="Риски">
+  <header><span class="lab">Раздел 8</span><h2>Системные риски и роль государства</h2><p class="lead">Механизмы, которые ускоряют рост, создают и риски. Государство в сетевой экономике одновременно регулятор, заказчик и создатель собственных платформ.</p></header>
+  <div class="stack"><div class="seg" id="roleChips" role="group" aria-label="Роль государства"></div><div class="panel" id="rolePanel"></div></div>
+  <div class="stack"><h3 class="sub">Шесть системных рисков</h3>
+    <div class="chips"><button class="btn ghost" id="riskAll" aria-pressed="false">Показать все ответы</button></div>
+    <div class="grid rgrid" id="riskGrid"></div></div>
+  <div class="banner two"><div class="b1"><span class="lab">Дальше по курсу</span><h3>Лекции 7 и 9</h3><p>Факторы развития e-commerce разберём в Лекции 7, правовые механизмы регулирования в Лекции 9.</p></div><div class="b2"><span class="qm">“</span><p class="q2">Государство и бизнес вместе управляют рисками сетевой экономики.</p></div></div>
+</section>
+
+<!-- ИТОГИ -->
+<section class="chap" id="s-fin" data-tab="fin" data-label="Итоги">
+  <header><span class="lab">Выводы</span><h2>Главное из лекции</h2></header>
+  <div class="grid" id="concl"></div>
+  <div class="stack"><h3 class="sub">Блиц-опрос</h3><div class="fig"><div class="list" id="blitz"></div><div class="chips"><button class="btn" id="blitzBtn">Выбрать 3 вопроса</button></div></div>
+    <details class="ex-det"><summary>Все вопросы для самопроверки</summary><div class="body one"><ol class="qs" id="selfQ" style="margin:0;padding-left:1.3rem;display:flex;flex-direction:column;gap:8px"></ol></div></details></div>
+</section>
+
+<section class="chap" id="s-test" data-with="fin">
+  <header><span class="lab">Проверка</span><h2>Мини-тест и глоссарий</h2></header>
+  <div class="stack"><div class="score"><b class="big" id="score">0 из 10</b><span class="muted" id="scale">Отвечайте по порядку или выборочно</span><button class="btn ghost" id="qReset">Сбросить</button></div><div class="qgrid" id="quiz"></div></div>
+  <div class="stack"><h3 class="sub">Глоссарий</h3><input class="fld" id="gSearch" type="search" placeholder="Найти термин" aria-label="Поиск по глоссарию"><div class="grid" id="gloss"></div></div>
+  <div class="nextcta"><p>Теория закреплена. Теперь примените её к реальной платформе.</p><button class="btn" data-go="pr">Перейти к практикуму</button></div>
+</section>
+
+<!-- ПРАКТИКУМ -->
+<section class="chap" id="s-pr" data-tab="pr" data-label="Практикум">
+  <header><span class="lab">Практическое занятие П6</span><h2>Практикум «Сетевая карта платформы»</h2><p class="lead">Цель: применить системный подход и законы сетевой экономики к анализу реальной платформы.</p></header>
+  <div class="grid">
+    <div class="fig"><h3 class="sub">Жребий объекта</h3><div class="chips" id="lotChips"></div><div class="banner two" style="grid-template-columns:1fr"><div class="b2"><span class="lab" id="lotTeam">Команда 1</span><p class="q2" id="lotRes">Нажмите «Бросить жребий»</p></div></div><div class="chips"><button class="btn" id="lotBtn">Бросить жребий</button><button class="btn ghost" id="lotReset">Сначала</button></div></div>
+    <div class="fig"><h3 class="sub">Роли в команде</h3><div class="list" id="roles"></div></div>
+  </div>
+  <div class="stack"><h3 class="sub">Пять шагов</h3><div class="steps" id="prSteps"></div></div>
+  <div class="stack"><details class="ex-det"><summary>Таблица А.1. Сетевые эффекты платформы</summary><div class="body one"><div class="tbl"><table class="wide" id="tabA1"></table></div><label class="stack small" style="gap:6px">Какая сторона рынка субсидируется и как?<input class="fld" type="text" id="subsField" placeholder="Например: покупатели, через бесплатную доставку и кэшбэк"></label></div></details>
+    <details class="ex-det"><summary>Таблица А.2. «Маховик»</summary><div class="body one"><p class="small muted">Отметьте слабое звено: именно в него вложит ресурсы ваше решение.</p><div class="tbl"><table class="wide" id="tabA2"></table></div><div class="note wide" style="box-shadow:none"><span class="lab">Формат решения</span><p>«Если инвестировать в … , то через … усилится … , и в результате …»</p></div></div></details></div>
+  <div class="grid">
+    <div class="fig"><h3 class="sub">Критерии, 5 баллов</h3><div class="list" id="crit"></div>
+      <details class="ex-det" style="box-shadow:none"><summary>Усложнение для сильных групп, +0,5 балла</summary><div class="body one"><p>Сравните коммерческую платформу и государственную my.gov.uz. Какие сетевые эффекты есть у портала госуслуг, например чем больше ведомств подключено, тем полезнее портал гражданам, и наоборот? Чем отличаются цели «маховика» государства и бизнеса?</p></div></details></div>
+    <div class="fig"><h3 class="sub">Самостоятельная работа</h3><p class="small muted">Аналитическая записка на 3–4 страницы по одной теме на выбор.</p><ol id="topicsB" style="margin:0;padding-left:1.2rem;display:flex;flex-direction:column;gap:8px"></ol><p class="small muted">Использование ИИ нужно открыто указать в работе.</p></div>
+  </div>
+  <details class="ex-det"><summary>Рекомендуемая литература</summary><div class="body" id="lit"></div></details>
+</section>
+
+</main>
+<div class="pager"><div class="prog"><i id="progI"></i></div><div class="pin"><button class="btn ghost" id="pgPrev">Назад</button><span id="pgInfo" class="muted small" style="text-align:center"></span><button class="btn" id="pgNext">Далее</button></div></div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const fmt=n=>new Intl.NumberFormat('ru-RU').format(n);
+const ICON={
+ users:'<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M17 14c2.5 0 4 1.8 4 4.5"/>',
+ layers:'<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/>',
+ bank:'<path d="M3 9l9-5 9 5"/><path d="M5 10v8M10 10v8M14 10v8M19 10v8"/><path d="M3 20h18"/>',
+ truck:'<path d="M2 6h11v10H2z"/><path d="M13 9h4l4 4v3h-8"/><circle cx="6.5" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>',
+ scale:'<path d="M12 4v16M6 20h12M5 7h14"/><path d="M5 7l-3 7a3 3 0 006 0L5 7zM19 7l-3 7a3 3 0 006 0l-3-7z"/>',
+ data:'<path d="M4 20V11M10 20V4M16 20v-7M22 20H2"/>',
+ cart:'<circle cx="9" cy="20" r="1.6"/><circle cx="18" cy="20" r="1.6"/><path d="M3 4h3l2.5 11h10L21 8H7"/>',
+ card:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/>',
+ food:'<path d="M6 3v8M10 3v8M6 7h4M8 11v10M17 3c-2 2-3 5-3 8h3v10"/>'};
+const ico=k=>`<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[k]}</svg>`;
+const swap=el=>{el.classList.remove('swap');void el.offsetWidth;el.classList.add('swap')};
+const bar=(el,fn)=>el.addEventListener('click',e=>{const b=e.target.closest('button');if(b&&el.contains(b)){$$('button',el).forEach(x=>x.setAttribute('aria-pressed',x===b));fn(b.dataset.v)}});
+function xcards(root,items){
+ root.innerHTML=items.map((it,i)=>`<button class="xcard" aria-expanded="false"><span class="xh">${it.ic?`<span class="ico ${['g','s','m'][i%3]}">${ico(it.ic)}</span>`:''}<span class="xt">${it.tag?`<span class="tag ${it.tag[0]}">${it.tag[1]}</span>`:''}<b>${it.t}</b><span class="small muted">${it.s||''}</span></span><span class="pm" aria-hidden="true"></span></span><span class="xb">${it.b}</span></button>`).join('');
+ root.onclick=e=>{const c=e.target.closest('.xcard');if(c)c.setAttribute('aria-expanded',c.getAttribute('aria-expanded')!=='true')}}
+const F=(l,t)=>`<span class="f"><span class="lab">${l}</span><span>${t}</span></span>`;
+function mdPanel(list,panel,items,render){
+ list.innerHTML=items.map((it,i)=>`<button class="mdi" data-i="${i}" aria-pressed="false">${it.t}</button>`).join('');
+ const sel=i=>{$$('.mdi',list).forEach((b,j)=>b.setAttribute('aria-pressed',j===i));panel.innerHTML=render(items[i]);swap(panel)};
+ list.onclick=e=>{const b=e.target.closest('.mdi');if(b)sel(+b.dataset.i)};sel(0)}
+
+/* вкладки */
+(()=>{
+ const panels=$$('main [data-tab]'),fol=$$('main [data-with]'),rail=$('#rail');let cur=0;
+ rail.innerHTML=panels.map((p,i)=>`<li><button data-i="${i}">${p.dataset.label}</button></li>`).join('');
+ const go=(i,top=true)=>{i=Math.max(0,Math.min(panels.length-1,i));cur=i;panels.forEach((p,j)=>p.hidden=j!==i);fol.forEach(f=>f.hidden=f.dataset.with!==panels[i].dataset.tab);
+  const bs=$$('#rail button');bs.forEach((b,j)=>b.setAttribute('aria-current',j===i));if(bs[i].scrollIntoView)bs[i].scrollIntoView({block:'nearest',inline:'center'});
+  $('#pgInfo').textContent=panels[i].dataset.label+' · '+(i+1)+' из '+panels.length;$('#pgPrev').disabled=i===0;const last=i===panels.length-1;$('#pgNext').disabled=false;$('#pgNext').innerHTML=last?'К началу':'Далее<span class="nx">: '+panels[i+1].dataset.label+'</span>';$('#progI').style.width=((i+1)/panels.length*100)+'%';
+  if(top)window.scrollTo({top:0});try{history.replaceState(null,'','#'+panels[i].dataset.tab)}catch(e){}};
+ rail.onclick=e=>{const b=e.target.closest('button');if(b)go(+b.dataset.i)};
+ $('#pgPrev').onclick=()=>go(cur-1);$('#pgNext').onclick=()=>go(cur===panels.length-1?0:cur+1);
+ document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){e.preventDefault();const i=panels.findIndex(p=>p.dataset.tab===g.dataset.go);if(i>=0)go(i)}});
+ document.addEventListener('keydown',e=>{if(e.metaKey||e.ctrlKey||e.altKey||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)||e.target.getAttribute('role')==='button')return;if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
+ const k=panels.findIndex(p=>p.dataset.tab===(location.hash||'').slice(1));go(k>=0?k:0,false)})();
+
+/* линия / сеть */
+(()=>{
+ bar($('#segLine'),v=>{$('#linePipe').hidden=v!=='pipe';$('#lineNet').hidden=v!=='net'});
+ const on=new Set(),pos=[...Array(9)].map((_,i)=>{const a=(-90+i*40)*Math.PI/180;return[220+178*Math.cos(a),170+132*Math.sin(a)]});
+ const draw=()=>{
+  $('#netSvg').innerHTML=`<circle cx="220" cy="170" r="160" fill="var(--sand)" opacity=".55"/>`+pos.map((p,i)=>`<line x1="220" y1="170" x2="${p[0].toFixed(1)}" y2="${p[1].toFixed(1)}" stroke="${on.has(i)?'var(--sa)':'var(--line)'}" stroke-width="${on.has(i)?3:1.5}"/>`).join('')+`<circle cx="220" cy="170" r="46" fill="var(--plat)"/><text x="220" y="158" text-anchor="middle" style="font:500 12px var(--f-body);fill:#fff">Ваша покупка</text><text x="220" y="190" text-anchor="middle" style="font:600 30px var(--f-display);fill:#fff">${on.size}</text>`+pos.map((p,i)=>`<g data-i="${i}" tabindex="0" role="button" aria-pressed="${on.has(i)}" aria-label="Участник ${i+1}" style="cursor:pointer"><circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="21" fill="${on.has(i)?'var(--sa)':'var(--surface)'}" stroke="${on.has(i)?'var(--sa)':'var(--muted)'}" stroke-width="2"/><text x="${p[0].toFixed(1)}" y="${(p[1]+6).toFixed(1)}" text-anchor="middle" style="font:600 17px var(--f-body);fill:${on.has(i)?'#fff':'var(--muted)'};pointer-events:none">${i+1}</text></g>`).join('')};
+ const tg=g=>{if(!g)return;const i=+g.dataset.i;on.has(i)?on.delete(i):on.add(i);draw();const n=$(`#netSvg g[data-i="${i}"]`);if(n&&document.activeElement===document.body)n.focus()};
+ $('#netSvg').addEventListener('click',e=>tg(e.target.closest('g[data-i]')));
+ $('#netSvg').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();const g=e.target.closest('g[data-i]');if(g){const i=g.dataset.i;tg(g);const n=$(`#netSvg g[data-i="${i}"]`);n&&n.focus()}}});
+ draw()})();
+
+/* определение */
+(()=>{
+ const N={1:['Цифровая экономика','Самое широкое понятие: вся хозяйственная деятельность, основанная на цифровых технологиях и данных.'],2:['Сетевая экономика','Системное ядро цифровой экономики. Описывает, как именно создаётся ценность: через связи и взаимодействия.'],3:['Электронная торговля','Одна из важнейших сфер, где законы сетевой экономики проявляются наиболее ярко и измеримо.']};
+ const draw=v=>{
+  $('#nestSvg').innerHTML=`<circle cx="160" cy="150" r="140" fill="${v==1?'var(--sa-soft)':'var(--sand)'}" stroke="${v==1?'var(--sa)':'none'}" stroke-width="2.5"/><circle cx="160" cy="180" r="104" fill="${v==2?'var(--plat-soft)':'var(--sage)'}" stroke="${v==2?'var(--plat)':'none'}" stroke-width="2.5"/><circle cx="160" cy="210" r="62" fill="${v==3?'var(--plat)':'var(--b1)'}" stroke="${v==3?'var(--deep)':'none'}" stroke-width="2.5"/>
+   <text x="160" y="32" text-anchor="middle" style="font:600 14px var(--f-body);fill:var(--ink)">Цифровая экономика</text><text x="160" y="104" text-anchor="middle" style="font:600 14px var(--f-body);fill:var(--ink)">Сетевая экономика</text><text x="160" y="205" text-anchor="middle" style="font:600 13px var(--f-body);fill:#fff">Электронная</text><text x="160" y="222" text-anchor="middle" style="font:600 13px var(--f-body);fill:#fff">торговля</text>`;
+  $$('#nestChips .chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v==v));
+  $('#nestInfo').innerHTML=`<h3>${N[v][0]}</h3><p>${N[v][1]}</p>`;swap($('#nestInfo'))};
+ $('#nestChips').innerHTML=[1,2,3].map(v=>`<button class="chip" data-v="${v}" aria-pressed="false">${N[v][0]}</button>`).join('');
+ $('#nestChips').onclick=e=>{const b=e.target.closest('.chip');if(b)draw(+b.dataset.v)};draw(2);
+ const A=[['1995','Дон Тапскотт','«Электронно-цифровое общество»','Ввёл понятие «цифровая экономика». Описал переход от иерархий к сетям и «молекулярным» организациям.','Компания становится узлом сети партнёров, а не замкнутой вертикалью.'],
+ ['1996','Мануэль Кастельс','«Подъём сетевого общества»','Сеть — базовая форма организации общества информационной эпохи. Власть и ценность у тех, кто управляет потоками.','Платформы работают как хабы потоков товаров, денег и данных.'],
+ ['1998','Кевин Келли','«Новые правила для новой экономики»','Ценность в изобилии, а не в дефиците. Следуй за бесплатным. Связи важнее узлов.','Объясняет бесплатные сервисы для покупателей и субсидирование одной из сторон рынка.'],
+ ['1999','Шапиро и Вэриан','«Информационные правила»','Экономика информационных благ: нулевые предельные издержки, сетевые эффекты, блокировка, издержки переключения, стандарты.','Инструментарий для ценовой и конкурентной стратегии платформ.'],
+ ['1996','Брайан Артур','Harvard Business Review','Закон возрастающей отдачи: в сетевых отраслях лидер становится сильнее, рынок склонен к концентрации.','Объясняет, почему e-рынки часто «схлопываются» до 2–3 игроков.'],
+ ['2003','Роше, Тироль и др.','Двусторонние рынки; «Революция платформ», 2016','Платформа как бизнес-модель, соединяющая производителей и потребителей.','Основа анализа маркетплейсов, агрегаторов и суперприложений.']];
+ $('#authCards').innerHTML=A.map((a,i)=>`<button class="tcard" data-i="${i}" aria-pressed="false"><span class="yr">${a[0]}</span><b>${a[1]}</b><small>${a[2]}</small></button>`).join('');
+ const sel=i=>{$$('#authCards .tcard').forEach((b,j)=>b.setAttribute('aria-pressed',j===i));$('#authPanel').innerHTML=`<h3>${A[i][1]}</h3><div class="f"><span class="lab">Ключевая идея</span><p>${A[i][3]}</p></div><div class="f"><span class="lab">Что это даёт для e-commerce</span><p>${A[i][4]}</p></div>`;swap($('#authPanel'))};
+ $('#authCards').onclick=e=>{const b=e.target.closest('.tcard');if(b)sel(+b.dataset.i)};sel(0)})();
+
+/* система */
+(()=>{
+ const S=[['users','Субъекты','спрос и предложение','покупатели, продавцы (юрлица, ИП, самозанятые), платформы, производители','формируют спрос и предложение'],['layers','Инфраструктура сделки','поиск и доверие','сайты и приложения, каталоги, рекомендательные алгоритмы, отзывы и рейтинги','обеспечивают поиск, сравнение и доверие'],['bank','Финансовая подсистема','расчёты и кредит','банки, платёжные системы (Uzcard, Humo, Visa, Mastercard), кошельки, рассрочка (BNPL)','проводят расчёты и кредитуют спрос'],['truck','Логистическая подсистема','доставка товара','склады, фулфилмент, курьерские службы, пункты выдачи (ПВЗ), постаматы','физически доставляют товар'],['scale','Институциональная подсистема','правила и гарантии','законодательство, налоговые органы, таможня, системы e-ID и ЭЦП, защита прав потребителей','задают правила и гарантируют исполнение'],['data','Информационная подсистема','данные и управление','данные о поведении клиентов, аналитика, ИИ-модели','обеспечивают управление и обратную связь']];
+ xcards($('#subGrid'),S.map(s=>({ic:s[0],t:s[1],s:s[2],b:F('Элементы',s[3])+F('Функция в системе',s[4])})));
+ const P=[['Целостность и эмерджентность','целое обладает свойствами, которых нет у частей','Ни продавец, ни банк, ни курьер по отдельности не создают «покупку в один клик с доставкой завтра». Это эмерджентное свойство системы.'],['Открытость','постоянный обмен с внешней средой','Платформа зависит от курса валют, таможенных правил, интернет-покрытия и покупательной способности.'],['Иерархичность','система состоит из подсистем и сама входит в надсистему','Маркетплейс → экосистема (банк, доставка, рассрочка) → цифровая экономика страны → мировая e-commerce.'],['Обратная связь','результат влияет на дальнейшее поведение системы','Положительная: больше покупателей → больше продавцов → больше покупателей. Отрицательная: рост комиссий → уход продавцов.'],['Синергия','совместный эффект больше суммы отдельных','Единый аккаунт для покупок, платежей и рассрочки увеличивает частоту использования каждого сервиса.'],['Самоорганизация и адаптивность','система перестраивается без центрального приказа','Алгоритмы ранжирования, рейтинги и отзывы автоматически отсеивают недобросовестных участников.'],['Нелинейность','малые причины могут давать большие последствия','Вирусный ролик или сбой в платёжной системе за часы меняют поведение миллионов клиентов.']];
+ mdPanel($('#propList'),$('#propPanel'),P.map(p=>({t:p[0],d:p})),it=>`<h3>${it.t}</h3><div class="f"><span class="lab">Суть</span><p>${it.d[1]}</p></div><div class="f"><span class="lab">В электронной торговле</span><p>${it.d[2]}</p></div>`);
+ const C=['Платформа повышает комиссию ради краткосрочной выручки','Продавцы переносят комиссию в цены','Покупатели уходят к конкуренту','Оборот падает, совокупная выручка ниже прежней'];
+ const ch=v=>{$('#chain').innerHTML=v==='lin'?`<div class="step"><span class="n">Решение</span><h3>${C[0]}</h3></div><div class="step ok"><span class="n">Что видно</span><h3>Выручка растёт</h3><span class="small muted">Виден только один элемент системы</span></div>`:C.map((c,i)=>`<div class="step ${i===3?'end':''}"><span class="n">${i===0?'Решение':'Последствие '+i}</span><h3>${c}</h3></div>`).join('');swap($('#chain'))};
+ bar($('#segThink'),ch);ch('lin')})();
+
+/* законы */
+(()=>{
+ const LAW={
+  sar:{n:'Закон Сарнова',f:'V ~ n',sub:'сеть «один-ко-многим»',lab:'Связей от источника',cnt:n=>n,unit:'Зрителей в сети',logic:'Каждый новый зритель добавляет одинаковую ценность. Источник один, связи идут только от него.',ex:'Интернет-магазин одного бренда, рассылка, телевизионная реклама.'},
+  met:{n:'Закон Меткалфа',f:'V ~ n(n−1)/2 ≈ n²',sub:'сеть «каждый с каждым»',lab:'Возможных пар (связей)',cnt:n=>n*(n-1)/2,unit:'Участников в сети',logic:'Число возможных связей растёт квадратично, поэтому при вдвое большей сети пар почти вчетверо больше.',ex:'C2C-площадки объявлений (OLX), мессенджеры, платёжные сети P2P.'},
+  rid:{n:'Закон Рида',f:'V ~ 2ⁿ',sub:'группы и сообщества',lab:'Возможных групп',cnt:n=>Math.pow(2,n)-n-1,unit:'Участников в сети',logic:'Ценность создают не только пары, но и группы, которые участники могут образовывать.',ex:'Социальная коммерция, групповые покупки, сообщества продавцов в Telegram.'}};
+ const HULLS=[[0,1,2],[2,3,4],[1,3,5],[0,2,4,6],[1,2,3,4],[3,5,7],[0,4,8],[2,6,9],[0,1,3,5,7]];
+ function svg(k,n){
+  const pts=[...Array(n)].map((_,i)=>{const a=(-90+i*360/n)*Math.PI/180;return[200+150*Math.cos(a),200+150*Math.sin(a)]});let s='';
+  if(k==='sar'){pts.forEach(p=>s+=`<line x1="200" y1="200" x2="${p[0].toFixed(1)}" y2="${p[1].toFixed(1)}" stroke="var(--muted)" stroke-width="3" opacity=".55"/>`);s+=`<circle cx="200" cy="200" r="30" fill="var(--plat)"/>`}
+  else{for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)s+=`<line x1="${pts[i][0].toFixed(1)}" y1="${pts[i][1].toFixed(1)}" x2="${pts[j][0].toFixed(1)}" y2="${pts[j][1].toFixed(1)}" stroke="var(--muted)" stroke-width="${k==='rid'?2:3.5}" opacity="${k==='rid'?.28:.55}"/>`;
+   if(k==='rid')HULLS.filter(h=>h.every(i=>i<n)).forEach((h,t)=>{const col=['var(--sa)','var(--sb)','var(--plat)'][t%3];s+=`<polygon points="${h.map(i=>pts[i][0].toFixed(1)+','+pts[i][1].toFixed(1)).join(' ')}" fill="${col}" fill-opacity=".2" stroke="${col}" stroke-width="2.5" stroke-linejoin="round"/>`})}
+  pts.forEach((p,i)=>s+=`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="${n>8?16:19}" fill="${i%2?'var(--sb)':'var(--sa)'}"/>`);return s}
+ let k='met',n=6;
+ const DEF={sar:'Ценность сети растёт линейно (n), пропорционально числу зрителей.',met:'Ценность сети пропорциональна квадрату числа пользователей (n²): учитываются все парные соединения.',rid:'Ценность растёт экспоненциально (2ⁿ), так как учитываются все возможные группы и сообщества внутри сети.'};
+ $('#lawCards').innerHTML=Object.entries(LAW).map(([id,l])=>`<button class="tcard" data-k="${id}" aria-pressed="false"><span class="fm">${l.f}</span><b>${l.n}</b><small>${l.sub}</small><span class="def">${DEF[id]}</span></button>`).join('');
+ const table=`<div class="tbl"><table><thead><tr><th>Участников</th><th class="num">Возможных пар</th></tr></thead><tbody><tr><td>2</td><td class="num">1</td></tr><tr><td>10</td><td class="num">45</td></tr><tr><td>100</td><td class="num">4 950</td></tr><tr><td>1 000</td><td class="num">499 500</td></tr></tbody></table></div><p class="small muted">Схема показывает до 10 участников, таблица продолжает ряд.</p>`;
+ const draw=()=>{const l=LAW[k];
+  $$('#lawCards .tcard').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===k));
+  $('#lawSvg').innerHTML=svg(k,n);
+  $('#lawOut').innerHTML=`<div class="formula">${l.n}: ${l.f}</div><div class="ctl"><label for="lawN"><span>${l.unit}</span><output>${n}</output></label><input id="lawN" type="range" min="2" max="10" value="${n}"></div><div class="kpi"><span>${l.lab}</span><b>${fmt(l.cnt(n))}</b></div>${k==='met'?table:''}<p>${l.logic}</p><div><span class="lab">Пример в торговле</span><p>${l.ex}</p></div>`;
+  $('#lawN').oninput=e=>{n=+e.target.value;$('#lawSvg').innerHTML=svg(k,n);$('#lawOut output').textContent=n;$('#lawOut .kpi b').textContent=fmt(LAW[k].cnt(n))}};
+ $('#lawCards').onclick=e=>{const b=e.target.closest('.tcard');if(b){k=b.dataset.k;draw();swap($('#lawOut'))}};draw();
+ const PT=[['Возрастающая отдача (В. Б. Артур)','Чем больше доля рынка, тем ниже издержки и выше привлекательность продукта.','Рынки склонны к концентрации: «победитель получает всё или почти всё».'],['Почти нулевые предельные издержки','Обслуживание ещё одного пользователя цифрового сервиса почти ничего не стоит.','Выгодно быстро масштабироваться. Бесплатность для одной из сторон становится нормой.'],['Эффект блокировки (lock-in)','Клиенту дорого уходить: история заказов, бонусы, рейтинг продавца, рассрочка.','Борьба идёт за удержание, а не только за привлечение.'],['Критическая масса','До определённого порога сеть малополезна, после него растёт сама.','Главная задача стартапа — пройти порог как можно быстрее.'],['Ценность в изобилии (К. Келли)','Ценность создаётся распространённостью, а не дефицитом.','Открытые API, бесплатные инструменты для продавцов, интеграции с партнёрами.'],['Дезинтермедиация и реинтермедиация','Традиционные посредники исчезают, но появляются новые, цифровые.','Оптовик заменяется платформой, но посредник никуда не уходит, он меняет форму.']];
+ $('#patList').innerHTML=PT.map((p,i)=>`<details class="ex-det" ${i===0?'open':''}><summary>${p[0]}</summary><div class="body"><div class="f"><span class="lab">Содержание</span><p>${p[1]}</p></div><div class="f"><span class="lab">Следствие для бизнеса</span><p>${p[2]}</p></div></div></details>`).join('')})();
+
+/* эффекты */
+(()=>{
+ const E=[['Прямой (односторонний)','больше участников той же группы → выше ценность для каждого','Больше пользователей платёжного приложения → больше людей, которым можно мгновенно перевести деньги.',1],['Косвенный (перекрёстный)','рост одной стороны рынка повышает ценность для другой','Больше покупателей на маркетплейсе → больше продавцов → шире ассортимент для покупателей.',1],['Внутригрупповой отрицательный','рост числа участников той же стороны снижает ценность','Продавцы конкурируют за внимание, растут затраты на внутреннюю рекламу.',0],['Перегрузка (congestion)','сеть «забивается», качество падает','Очереди в ПВЗ во время распродаж, задержки доставки в «11.11».',0],['Данные-эффект','больше взаимодействий → больше данных → лучше алгоритмы → лучше сервис','Персональные рекомендации, скоринг для рассрочки, прогноз спроса.',1],['Локальный','важны не все участники, а ближайшие (география, интересы)','Сервисы доставки еды: ценность определяют рестораны и курьеры в вашем районе.',1],['Социальный (идентичность)','продукт ценен, потому что им пользуются «свои»','Покупки по рекомендациям блогеров и в сообществах.',1]];
+ const draw=f=>xcards($('#effGrid'),E.filter(e=>f==='all'||(f==='pos')===!!e[3]).map(e=>({t:e[0],s:e[1],tag:e[3]?['pos','усиливает']:['neg','снижает'],b:F('Пример',e[2])})));
+ bar($('#segEff'),draw);draw('all');
+ const T=30,W=400,H=220,x=v=>30+v/100*(W-50),y=v=>H-30-v*(H-50),sig=v=>1/(1+Math.exp(-(v-T)/8));
+ const cm=()=>{const v=+$('#cmSlide').value;let d='';for(let i=0;i<=100;i+=2)d+=(i?'L':'M')+x(i).toFixed(1)+' '+y(sig(i)).toFixed(1);
+  $('#cmChart').innerHTML=`<line x1="30" y1="${H-30}" x2="${W-20}" y2="${H-30}" stroke="var(--line)"/><line x1="30" y1="20" x2="30" y2="${H-30}" stroke="var(--line)"/><rect x="${x(T)}" y="20" width="${W-20-x(T)}" height="${H-50}" fill="var(--good-soft)" opacity=".7"/><line x1="${x(T)}" x2="${x(T)}" y1="20" y2="${H-30}" stroke="var(--brown)" stroke-width="1.5" stroke-dasharray="4 3"/><text x="${x(T)+5}" y="34" style="font:500 12px var(--f-body);fill:var(--brown)">критическая масса</text><path d="${d}" fill="none" stroke="var(--plat)" stroke-width="3"/><circle cx="${x(v)}" cy="${y(sig(v))}" r="7" fill="var(--sa)" stroke="var(--surface)" stroke-width="2"/><text x="${W-20}" y="${H-8}" text-anchor="end" style="font:500 12px var(--f-body);fill:var(--muted)">участники, % потенциала</text><text x="36" y="${H-36}" style="font:500 12px var(--f-body);fill:var(--muted)">ценность</text>`;
+  $('#cmVal').textContent=v;$('#cmNote').innerHTML=v>=T?'<span class="lab" style="color:var(--good)">Порог пройден</span><p>Сеть растёт за счёт собственных сетевых эффектов.</p>':'<span class="lab">Ниже порога</span><p>Сеть малополезна. Без внешних усилий новые участники не приходят.</p>'};
+ $('#cmSlide').oninput=cm;cm();
+ const S=[['Субсидирование одной стороны','Бесплатные или льготные условия для стороны, более чувствительной к цене: часто продавцы на старте, покупатели на этапе роста.'],['«Single-user value»','Сначала дать ценность даже одному пользователю (инструмент учёта для продавца, каталог), сеть подключить позже.'],['Захват «плацдарма»','Начать с узкой ниши или одного города, где критическую массу набрать легче, затем расширяться.'],['«Big bang» запуск','Массированные маркетинговые вложения и промокоды, чтобы обе стороны появились одновременно.'],['Опора на существующую сеть','Использовать готовую базу клиентов банка, оператора связи или мессенджера. Типичная стратегия экосистем.']];
+ mdPanel($('#stratList'),$('#stratPanel'),S.map(s=>({t:s[0],d:s})),it=>`<h3>${it.t}</h3><div class="f" style="grid-column:1/-1"><p>${it.d[1]}</p></div>`)})();
+
+/* платформы */
+(()=>{
+ const sub={buy:{b:['Покупатели','Цена ноль или меньше: бесплатная доставка, кэшбэк'],s:['Продавцы','Платят комиссию, рекламу и за финансовые услуги'],n:'Покупатели чувствительнее к цене. Платформа привлекает их выгодными условиями и зарабатывает на продавцах.'},sell:{b:['Покупатели','Платят за товар и сервисы, когда ассортимент уже есть'],s:['Продавцы','Льготные или нулевые условия на старте'],n:'На старте платформа субсидирует продавцов, чтобы собрать ассортимент. Покупатели придут, когда на витрине будет что выбрать.'}};
+ const ts=v=>{$('#tsCards').innerHTML=`<div class="card" style="border-top:4px solid var(--sb)"><span class="lab">${sub[v].b[0]}</span><p>${sub[v].b[1]}</p></div><div class="card" style="border-top:4px solid var(--sa)"><span class="lab">${sub[v].s[0]}</span><p>${sub[v].s[1]}</p></div><div class="card" style="grid-column:1/-1;box-shadow:none"><p><b>Цена для одной стороны зависит от размера другой.</b> ${sub[v].n}</p></div>`;swap($('#tsCards'))};
+ bar($('#segSub'),ts);ts('buy');
+ const NODES=[['Больше покупателей','активные покупатели','--sb'],['Больше продавцов','активные продавцы','--sa'],['Шире ассортимент, ниже цены','число товаров, цена','--sa'],['Больше данных и заказов','заказов в день','--plat'],['Ниже издержки на заказ','стоимость заказа','--plat'],['Лучше клиентский опыт','срок доставки, ПВЗ','--sb']];
+ const DEF=[4,4,4,4,3,2];let sc=DEF.slice();
+ const pos=NODES.map((_,i)=>{const a=(-90+i*60)*Math.PI/180;return[50+36*Math.cos(a),50+36*Math.sin(a),a]});
+ const arcs=NODES.map((_,i)=>{const a0=pos[i][2]+.45,a1=pos[(i+1)%6][2]-.45+(i===5?Math.PI*2:0),r=36,p=a=>`${(50+r*Math.cos(a)).toFixed(2)} ${(50+r*Math.sin(a)).toFixed(2)}`,e=a1,hx=50+r*Math.cos(e),hy=50+r*Math.sin(e),tx=-Math.sin(e),ty=Math.cos(e),nx=Math.cos(e),ny=Math.sin(e);
+  return `<path class="arc" d="M${p(a0)} A${r} ${r} 0 0 1 ${p(a1)}"/><path class="arc" d="M${(hx-tx*2.4+nx*1.6).toFixed(2)} ${(hy-ty*2.4+ny*1.6).toFixed(2)} L${hx.toFixed(2)} ${hy.toFixed(2)} L${(hx-tx*2.4-nx*1.6).toFixed(2)} ${(hy-ty*2.4-ny*1.6).toFixed(2)}"/>`}).join('');
+ $('#fw').innerHTML=`<svg viewBox="0 0 100 100" aria-hidden="true"><circle class="ring" cx="50" cy="50" r="24"/>${arcs}</svg>`+NODES.map((n,i)=>`<button class="n" data-i="${i}" aria-pressed="false" style="left:${pos[i][0]}%;top:${pos[i][1]}%;background:var(${n[2]})">${n[0]}</button>`).join('')+`<div class="mid">Петля роста</div>`;
+ $('#fwSliders').innerHTML=NODES.map((n,i)=>`<div class="sl" data-i="${i}"><span class="nm"><b style="font-weight:inherit">${n[0]}</b><br><span class="muted small">${n[1]}</span></span><input type="range" min="1" max="5" value="${sc[i]}" aria-label="${n[0]}"><b>${sc[i]}</b></div>`).join('');
+ const weakest=()=>sc.indexOf(Math.min(...sc));
+ function fw(){const m=Math.min(...sc),w=weakest();
+  $$('#fwSliders .sl').forEach((r,i)=>{r.classList.toggle('weak',i===w);$('input',r).value=sc[i];$('b:last-child',r).textContent=sc[i]});
+  $$('#fw .n').forEach((b,i)=>b.setAttribute('aria-pressed',i===w));
+  $('#fwSpeed').textContent=m+' из 5';$('#fwGauge').style.width=m*20+'%';$('#fw').style.setProperty('--dur',(22/m)+'s');
+  $('#fwMsg').innerHTML=`<span class="lab">Слабое звено</span><p><b>${NODES[w][0]}.</b> Колесо вращается со скоростью самого слабого звена, вложения в другие звенья скорость не меняют.</p>`}
+ $('#fwSliders').oninput=e=>{const r=e.target.closest('.sl');if(r){sc[+r.dataset.i]=+e.target.value;fw()}};
+ $('#fw').onclick=e=>{const b=e.target.closest('.n');if(b){sc[+b.dataset.i]=Math.min(5,sc[+b.dataset.i]+1);fw()}};
+ $('#fwWeak').onclick=()=>{const w=weakest();sc[w]=Math.min(5,sc[w]+1);fw()};
+ $('#fwVis').onclick=()=>{sc[0]=Math.min(5,sc[0]+1);fw()};
+ $('#fwReset').onclick=()=>{sc=DEF.slice();fw()};fw()})();
+
+/* Узбекистан */
+(()=>{
+ const ST=[['22,7 трлн','сумов, объём онлайн-торговли в 2025 г. Рост более чем в 22 раза за 5 лет','НАПП, март 2026'],['4,6%','доля онлайна в розничном товарообороте','НАПП; WORLDEF, 2026'],['9–11%','целевая доля на 2026 год','совещание у Президента РУз, апрель 2026'],['115','электронных торговых платформ','НАПП, 2026'],['514,9 тыс.','самозанятых в онлайн-торговле','НАПП, 2026'],['≈90%','проникновение интернета','Uzum, обзор бизнеса']];
+ $('#stats').innerHTML=ST.map(s=>`<div class="stat"><b>${s[0]}</b><span>${s[1]}</span><small>${s[2]}</small></div>`).join('');
+ $('#shareBars').innerHTML=[['Узбекистан, 2025',4.6,'var(--sb)','4,6%'],['Цель на 2026',10,'var(--sa)','9–11%'],['В среднем по миру',20,'var(--plat)','≈20%']].map(b=>`<div class="row3"><span>${b[0]}</span><div class="tr"><i style="width:${b[1]*5}%;background:${b[2]}"></i></div><b>${b[3]}</b></div>`).join('');
+ const U=[['cart','Uzum Market','маркетплейс','17 000+ продавцов; GMV ≈500 млн долл.; ≈200 млн трансграничных товарных позиций','Косвенные сетевые эффекты двустороннего рынка.'],['users','Вся экосистема','единая база клиентов','≈20 млн пользователей; 17+ млн активны ежемесячно (авг. 2025); оценка 2,3 млрд долл.','Опора на существующую сеть: каждый новый сервис получает готовую клиентскую базу.'],['bank','Uzum Bank и платежи','цифровой банк','≈5 млн клиентов; 4,1 млн карт; платёжный оборот ≈11 млрд долл.','Lock-in и синергия: оплата картой экосистемы даёт скидки на маркетплейсе.'],['card','Uzum Nasiya','рассрочка','кредитный портфель ≈400 млн долл.','Данные-эффект: история покупок используется для скоринга.'],['truck','Логистика','ПВЗ и склады','≈1 500 ПВЗ с планом до 3 000; склады 125 тыс. м² с расширением до 500 тыс. м²','Снятие «узкого места» маховика: доступность доставки в регионах.'],['food','Uzum Tezkor','доставка еды','локальная сеть ресторанов и курьеров','Локальные сетевые эффекты.']];
+ xcards($('#uzGrid'),U.map(u=>({ic:u[0],t:u[1],s:u[2],b:F('Показатели, 2025 — начало 2026',u[3])+F('Сетевой механизм',u[4])})))})();
+
+/* риски */
+(()=>{
+ const RO=[['Регулятор','Антимонопольный контроль, прозрачность комиссий, законодательство о персональных данных, недискриминационный доступ для продавцов.'],['Заказчик','Электронные госзакупки: государство само становится крупным участником цифровых рынков.'],['Создатель платформ','Единый портал интерактивных госуслуг, e-ID, онлайн-ККТ. Государство строит собственные сети и подключает к ним бизнес.']];
+ $('#roleChips').innerHTML=RO.map((r,i)=>`<button class="chip" data-i="${i}" aria-pressed="false">${r[0]}</button>`).join('');
+ const role=i=>{$$('#roleChips .chip').forEach((b,j)=>b.setAttribute('aria-pressed',j===i));$('#rolePanel').innerHTML=`<h3>${RO[i][0]}</h3><div class="f" style="grid-column:1/-1"><p>${RO[i][1]}</p></div>`;swap($('#rolePanel'))};
+ $('#roleChips').onclick=e=>{const b=e.target.closest('.chip');if(b)role(+b.dataset.i)};role(0);
+ const R=[['Монополизация («победитель получает всё»)','возрастающая отдача, lock-in','антимонопольный контроль цифровых рынков, прозрачность комиссий и ранжирования'],['Зависимость продавцов от платформы','асимметрия власти и данных','недискриминационный доступ, договорные стандарты, мультихоминг продавцов (одновременная работа на нескольких площадках)'],['Концентрация персональных данных','данные-эффект','законодательство о персональных данных, кибербезопасность, локализация данных'],['Системные сбои («эффект домино»)','высокая связность элементов','резервирование критической инфраструктуры, стресс-тесты платёжных систем'],['Теневой оборот и недобросовестные продавцы','низкий порог входа','интеграция платформ с налоговыми системами, онлайн-чеки, e-ID для верификации продавцов'],['Цифровое неравенство','сетевые эффекты сильнее там, где выше плотность участников','развитие инфраструктуры в регионах, цифровая грамотность, ПВЗ в малых городах']];
+ $('#riskGrid').innerHTML=R.map((r,i)=>`<div class="card"><h3>${r[0]}</h3><span class="tag">системная причина</span><p>${r[1]}</p><button class="rbtn" type="button" aria-expanded="false" aria-controls="ans${i}">Ответ государства и бизнеса</button><div class="rans" id="ans${i}" hidden><span class="tag pos">ответ</span><p>${r[2]}</p></div></div>`).join('');
+ const setAns=(b,on)=>{b.setAttribute('aria-expanded',on);document.getElementById(b.getAttribute('aria-controls')).hidden=!on};
+ const syncAll=()=>{const bs=$$('#riskGrid .rbtn'),all=bs.every(b=>b.getAttribute('aria-expanded')==='true');$('#riskAll').textContent=all?'Скрыть все ответы':'Показать все ответы'};
+ $('#riskGrid').onclick=e=>{const b=e.target.closest('.rbtn');if(!b)return;setAns(b,b.getAttribute('aria-expanded')!=='true');syncAll()};
+ $('#riskAll').onclick=()=>{const bs=$$('#riskGrid .rbtn'),all=bs.every(b=>b.getAttribute('aria-expanded')==='true');bs.forEach(b=>setAns(b,!all));syncAll()}})();
+
+/* итоги */
+(()=>{
+ const C=['Сетевая экономика: ценность создаётся связями и взаимодействиями, а не только ресурсами компаний. Электронная торговля — её наиболее наглядное проявление.','Электронная торговля — открытая, иерархическая, самоорганизующаяся система с эмерджентными свойствами. Управлять ею можно через понимание связей между подсистемами.','Ценность сети растёт нелинейно (Меткалф, Рид), но на практике важны активные и релевантные связи (n·log n, ликвидность).','Сетевые эффекты бывают прямыми, косвенными, отрицательными, локальными и основанными на данных. Они формируют конкурентный «ров» платформ.','Маркетплейс — двусторонний рынок: цена для одной стороны зависит от размера другой, поэтому субсидирование одной из сторон рационально.','Рынок Узбекистана прошёл критическую массу и растёт ускоренно. Кейс Uzum показывает превращение маркетплейса в экосистему.','Системные риски (монополизация, зависимость, данные) требуют активной роли государства как регулятора и как владельца собственных платформ.'];
+ $('#concl').innerHTML=C.map((c,i)=>`<div class="card"><span class="lab">Вывод ${i+1}</span><p>${c}</p></div>`).join('');
+ const SQ=['Чем линейная цепочка создания ценности отличается от сетевой модели? Приведите пример из рынка Узбекистана.','Дайте определение сетевой экономики. Чем она отличается от цифровой экономики?','Назовите подсистемы электронной торговли и функцию каждой.','Что такое эмерджентность? Приведите пример для электронной торговли.','Сформулируйте законы Сарнова, Меткалфа и Рида. В чём ограничение закона Меткалфа?','Чем прямой сетевой эффект отличается от косвенного? Почему маркетплейс опирается на косвенные?','Что такое критическая масса и какие стратегии помогают её пройти?','Почему платформа может ставить нулевую цену для одной стороны рынка и оставаться прибыльной?','Опишите «маховик» роста маркетплейса. Почему инвестировать нужно в самое слабое звено?','Какие системные риски порождает сетевая экономика и какова роль государства?'];
+ $('#selfQ').innerHTML=SQ.map(q=>`<li>${q}</li>`).join('');
+ const blitz=()=>{const idx=[...SQ.keys()].sort(()=>Math.random()-.5).slice(0,3);$('#blitz').innerHTML=idx.map(i=>`<div class="note wide" style="box-shadow:none"><span class="lab">Вопрос ${i+1}</span><p>${SQ[i]}</p></div>`).join('')};
+ $('#blitzBtn').onclick=blitz;blitz();
+ const Q=[['Согласно какому закону ценность сети пропорциональна квадрату числа участников?',['Сарнова','Меткалфа','Рида','Мура'],1],['Как называется свойство системы, при котором целое обладает качествами, отсутствующими у его частей?',['иерархичность','открытость','эмерджентность','нелинейность'],2],['Рост числа покупателей на маркетплейсе повышает его привлекательность для продавцов. Какой это сетевой эффект?',['прямой сетевой эффект','косвенный сетевой эффект','эффект перегрузки','эффект масштаба производства'],1],['Кто авторы теории двусторонних рынков (2003)?',['Шапиро и Вэриан','Роше и Тироль','Кац и Шапиро','Паркер и ван Алстин'],1],['Какая оценка ценности больших сетей реалистичнее закона Меткалфа (Одлызко и Тилли)?',['n','n·log n','n²','2ⁿ'],1],['Как называется ситуация, когда клиенту трудно уйти с платформы из-за накопленной истории, бонусов и рассрочки?',['дезинтермедиацией','эффектом блокировки (lock-in)','мультихомингом','синергией'],1],['Во сколько раз примерно вырастет число возможных парных связей, если число пользователей увеличится со 100 до 1 000?',['10 раз','50 раз','100 раз','1 000 раз'],2],['Ключевой актив платформы, в отличие от линейного бизнеса, — это:',['складские запасы','производственные мощности','сообщество пользователей и данные','собственная розничная сеть'],2],['Какую долю розничной торговли Узбекистана занимал онлайн по итогам 2025 года?',['1%','4,6%','15%','22%'],1],['Как называется стратегия запуска маркетплейса на клиентской базе банка?',['«big bang»','захвата плацдарма','опоры на существующую сеть','single-user value'],2]];
+ let res={};
+ const score=()=>{const s=Object.values(res).filter(Boolean).length,n=Object.keys(res).length;$('#score').textContent=s+' из 10';$('#scale').textContent=n<10?'Отвечено: '+n+' из 10':(s>=9?'Отлично':s>=7?'Хорошо':s>=5?'Удовлетворительно':'Стоит повторить материал')};
+ const render=()=>{res={};$('#quiz').innerHTML=Q.map((q,i)=>`<div class="q" data-i="${i}"><b>${i+1}. ${q[0]}</b><div class="seg">${q[1].map((o,j)=>`<button class="chip" data-j="${j}">${'абвг'[j]}) ${o}</button>`).join('')}</div><div class="fb" hidden></div></div>`).join('');score()};
+ $('#quiz').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;const card=b.closest('.q'),i=+card.dataset.i;if(i in res)return;const j=+b.dataset.j,ok=j===Q[i][2];res[i]=ok;$$('.chip',card).forEach((c,k)=>{c.disabled=true;if(k===Q[i][2])c.classList.add('ok');else if(k===j)c.classList.add('no')});const fb=$('.fb',card);fb.hidden=false;fb.className='fb '+(ok?'good':'bad');fb.textContent=ok?'Верно':'Правильный ответ: '+'абвг'[Q[i][2]]+') '+Q[i][1][Q[i][2]];score()};
+ $('#qReset').onclick=render;render();
+ const G=[['Сетевая экономика','экономика, в которой ценность создаётся и распределяется через цифровые сети взаимодействий'],['Сетевой эффект','зависимость ценности продукта для пользователя от числа других пользователей'],['Двусторонний рынок','рынок, где платформа обслуживает две группы клиентов, связанные перекрёстными сетевыми эффектами'],['Платформа','бизнес-модель, создающая ценность за счёт организации взаимодействий между внешними производителями и потребителями'],['Экосистема','совокупность взаимосвязанных сервисов вокруг единой клиентской базы и единого аккаунта'],['Критическая масса','минимальное число участников, после которого сеть растёт за счёт собственных сетевых эффектов'],['Lock-in (блокировка)','состояние, при котором издержки перехода к конкуренту выше выгоды от перехода'],['Multi-homing (мультихоминг)','одновременное использование участником нескольких конкурирующих платформ'],['GMV (Gross Merchandise Value)','общий денежный объём продаж товаров и услуг через торговую площадку или маркетплейс за определённый период'],['Take rate','доля оборота (GMV), которую платформа получает в виде комиссий и платы за услуги'],['Flywheel («маховик»)','самоподдерживающаяся петля положительной обратной связи, ускоряющая рост бизнеса'],['Эмерджентность','наличие у системы свойств, не сводимых к свойствам её элементов']];
+ const gl=q=>{const t=q.trim().toLowerCase();$('#gloss').innerHTML=G.filter(g=>!t||(g[0]+' '+g[1]).toLowerCase().includes(t)).map(g=>`<div class="card"><h3>${g[0]}</h3><p class="small">${g[1]}</p></div>`).join('')||'<p class="muted">Ничего не найдено. Попробуйте другое слово.</p>'};
+ $('#gSearch').oninput=e=>gl(e.target.value);gl('')})();
+
+/* практикум */
+(()=>{
+ const OB=['Uzum Market','Ozon (Узбекистан)','Wildberries (Узбекистан)','OLX.uz','Uzum Tezkor (доставка еды)','my.gov.uz (государственная платформа)'];
+ let pool=OB.slice(),team=1,spin=null;
+ const chips=()=>{$('#lotChips').innerHTML=OB.map(o=>`<span class="tag" style="${pool.includes(o)?'':'opacity:.4;text-decoration:line-through'}">${o}</span>`).join('')};chips();
+ $('#lotBtn').onclick=()=>{if(spin)return;if(!pool.length){$('#lotRes').textContent='Все объекты розданы';return}
+  const fin=pool[Math.floor(Math.random()*pool.length)],fast=matchMedia('(prefers-reduced-motion: reduce)').matches;let k=0;
+  const end=()=>{$('#lotRes').textContent=fin;$('#lotTeam').textContent='Команда '+team+' получает';pool=pool.filter(x=>x!==fin);team++;chips();spin=null};
+  if(fast){end();return}spin=setInterval(()=>{$('#lotRes').textContent=OB[Math.floor(Math.random()*OB.length)];if(++k>12){clearInterval(spin);end()}},70)};
+ $('#lotReset').onclick=()=>{if(spin)return;pool=OB.slice();team=1;$('#lotTeam').textContent='Команда 1';$('#lotRes').textContent='Нажмите «Бросить жребий»';chips()};
+ $('#roles').innerHTML=[['Системный аналитик','элементы и связи'],['Экономист','сетевые эффекты и монетизация'],['Стратег','«маховик» и слабое звено'],['Риск-менеджер','риски и регулирование'],['Спикер','защита результата']].map(r=>`<div><b>${r[0]}</b> <span class="muted small">${r[1]}</span></div>`).join('');
+ $('#prSteps').innerHTML=[['Карта системы','Нарисуйте на флипчарте платформу в центре и все группы участников вокруг. Стрелками покажите потоки товаров, денег и данных.'],['Сетевые эффекты','Заполните таблицу А.1: какие виды эффектов работают и какая сторона субсидируется.'],['«Маховик»','Постройте петлю из 5–6 звеньев, назовите метрику каждого и отметьте самое слабое.'],['Риски','Назовите два системных риска и одну меру государственного регулирования для каждого.'],['Решение','Сформулируйте одно управленческое решение: «Если инвестировать в … , то через … усилится … , и в результате …».']].map((s,i)=>`<div class="step"><span class="n">Шаг ${i+1}</span><h3>${s[0]}</h3><span class="small muted">${s[1]}</span></div>`).join('');
+ $('#tabA1').innerHTML=`<thead><tr><th>Вид эффекта</th><th>Есть ли?</th><th>Как проявляется на платформе</th><th>Сила (1–5)</th></tr></thead><tbody>`+['Прямой','Косвенный (перекрёстный)','Отрицательный / перегрузка','Данные-эффект','Локальный'].map(e=>`<tr><td><b>${e}</b></td><td><button class="chip" aria-pressed="false" data-yn>нет</button></td><td><input class="fld" type="text" aria-label="Проявление: ${e}"></td><td style="min-width:9rem"><input type="range" min="1" max="5" value="3" aria-label="Сила: ${e}" data-r> <b>3</b></td></tr>`).join('')+'</tbody>';
+ $('#tabA1').addEventListener('click',e=>{const b=e.target.closest('[data-yn]');if(b){const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on);b.textContent=on?'да':'нет'}});
+ $('#tabA2').innerHTML=`<thead><tr><th>Звено петли</th><th>Метрика</th><th>Состояние (1–5)</th><th>Слабое</th></tr></thead><tbody>`+[1,2,3,4,5,6].map(i=>`<tr><td><input class="fld" type="text" aria-label="Звено ${i}" placeholder="${i}."></td><td><input class="fld" type="text" aria-label="Метрика ${i}"></td><td style="min-width:9rem"><input type="range" min="1" max="5" value="3" aria-label="Состояние ${i}" data-r> <b>3</b></td><td><input type="radio" name="weak" aria-label="Слабое звено ${i}"></td></tr>`).join('')+'</tbody>';
+ document.addEventListener('input',e=>{if(e.target.matches('[data-r]'))e.target.nextElementSibling.textContent=e.target.value});
+ $('#crit').innerHTML=[['Полнота карты системы',1,'указаны все подсистемы и связи между ними'],['Корректность сетевых эффектов',1,'верно определены виды, обоснована субсидируемая сторона'],['Качество «маховика»',1.5,'петля замкнута, метрики измеримы, слабое звено обосновано'],['Системные риски и регулирование',1,'риски связаны с механизмами сетевой экономики, меры реалистичны'],['Презентация',0.5,'соблюдён регламент, даны ответы на вопросы']].map(c=>`<div><div style="display:flex;justify-content:space-between;gap:12px"><b>${c[0]}</b><span class="tag">${String(c[1]).replace('.',',')} б.</span></div><span class="small muted">${c[2]}</span></div>`).join('');
+ $('#topicsB').innerHTML=['Почему рынок e-commerce Узбекистана движется к концентрации: анализ через закон возрастающей отдачи','Экосистема и маркетплейс: сравнение двух игроков рынка Узбекистана','Сетевые эффекты государственных цифровых платформ: опыт Узбекистана и Эстонии','Как интеграция с e-ID и онлайн-ККТ меняет системную архитектуру электронной торговли'].map(t=>`<li>${t}</li>`).join('');
+ $('#lit').innerHTML=`<div><h3>Классика</h3><ul class="small" style="padding-left:1.1rem"><li>Castells M. The Rise of the Network Society, 1996</li><li>Kelly K. New Rules for the New Economy, 1998</li><li>Shapiro C., Varian H. Information Rules, 1999</li><li>Katz M., Shapiro C. Network Externalities, Competition, and Compatibility, AER, 1985</li><li>Arthur W.B. Increasing Returns and the New World of Business, HBR, 1996</li><li>Rochet J.-C., Tirole J. Platform Competition in Two-Sided Markets, JEEA, 2003</li><li>Parker G., Van Alstyne M., Choudary S.P. Platform Revolution, 2016</li><li>Odlyzko A., Tilly B. A Refutation of Metcalfe's Law, 2005</li><li>Tapscott D. The Digital Economy, 1995</li></ul></div><div><h3>Узбекистан и силлабус</h3><ul class="small" style="padding-left:1.1rem"><li>Fintech-Retail: объём онлайн-торговли 22,7 трлн сумов (18.03.2026)</li><li>WORLDEF: Uzbekistan Targets 11% E-Commerce Share in 2026 (10.04.2026)</li><li>Газета.uz: Ozon, Узбекистан на пороге бума e-commerce (30.09.2026)</li><li>TechCrunch: Uzum valuation rises 1.5x in seven months to $2.3B (10.03.2026)</li><li>uzum.com, обзор бизнеса</li><li>Генкин Б.М. Цифровая экономика и цифровые технологии, Юрайт, 2020</li><li>Карасев А.Ю. Интернет-бизнес: модели, технологии, правовые аспекты, 2019</li><li>Указ Президента РУз № УП-60 от 28.01.2022</li></ul></div>`})();
+</script>
+</body></html>
